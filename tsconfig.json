@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    // TS 5.9 deprecated `baseUrl` (removal planned for TS 7.0) but Next.js's
+    // own scaffolding still relies on it for the `@/*` import alias below.
+    // Silences the editor warning until Next.js's template moves off it.
+    "ignoreDeprecations": "5.0",
     "target": "ES2020",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,

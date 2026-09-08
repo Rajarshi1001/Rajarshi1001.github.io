@@ -28,7 +28,7 @@ export default function TerminalHero() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <span className="text-xs text-paper-100/40">{site.location}</span>
+              <span className="text-xs text-paper-100/40">Gurugram, India</span>
             </div>
 
             <div className="mt-9 flex flex-wrap gap-3">
