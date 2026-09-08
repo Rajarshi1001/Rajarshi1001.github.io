@@ -1,0 +1,40 @@
+---
+title: "Replacing three models with two segmentations, without losing accuracy"
+date: "2026-02-20"
+summary: "Why a 96% match rate mattered more than the model count when we consolidated a multi-offer ranking framework."
+tags: ["ranking", "marketing ml"]
+---
+
+The offer-ranking system I inherited had three separate XGBoost models, each trained for a
+different card segment, each scored independently and then stitched together downstream. It
+worked, but every change — a new feature, a retrain, a governance review — had to happen three
+times.
+
+The instinct is to just merge the training data and fit one model. That mostly doesn't work: the
+segments genuinely respond differently to the same offer, and a single model tends to regress
+toward the largest segment's behavior, quietly getting worse for everyone else.
+
+## Response-to-gross as the common currency
+
+Instead of merging models, we changed what the models predicted. Every offer got scored on
+**response-to-gross** — expected response scaled by the offer's gross value — instead of a
+raw response probability. That gave every segment a comparable currency, so ranking could happen
+across segments instead of within them.
+
+## The metric that decided the architecture
+
+The question that actually mattered wasn't "is the new setup as accurate as the old one" — it was
+**match rate**: for a given card member, does the new 2-segmentation setup surface the same top
+offer the old 3-model setup would have, or a better one by response-to-gross? We held out several
+months of live scoring decisions and checked agreement directly, rather than trusting an aggregate
+AUC that could hide segment-level regressions.
+
+96% match rate meant the two segmentations reproduced almost every decision the three-model system
+made — and where they disagreed, the new ranking's picks scored higher on response-to-gross, not
+lower. That's the number that got the migration approved, not a lift in offline accuracy.
+
+## What this generalizes to
+
+Consolidating models is rarely about proving the new one is "better" in the abstract. It's about
+proving it makes the *same good decisions* the thing it replaces was already making, on the
+specific cases that matter, before anyone will let you touch what happens after.

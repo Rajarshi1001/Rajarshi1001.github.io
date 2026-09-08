@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Theme palette. Each Tailwind color in tailwind.config.ts (ink-*, paper-*,
+ * mint-*, amber-*, coral-*, violet-*) reads its RGB channels from a variable
+ * here, so the entire site re-themes by swapping these values — no component
+ * needs a `dark:` variant. `next-themes` (wired up in app/layout.tsx) stamps
+ * `data-theme="dark"` or `data-theme="light"` on <html> before first paint.
+ *
+ * :root holds the dark palette both as the terminal aesthetic's true default
+ * and as the fallback for the brief pre-hydration instant / no-JS.
+ */
+:root,
+[data-theme='dark'] {
+  --color-ink-950: 10 14 20;
+  --color-ink-900: 15 20 28;
+  --color-ink-800: 22 28 38;
+  --color-ink-700: 35 43 56;
+  --color-ink-600: 58 68 86;
+  --color-paper-50: 247 248 250;
+  --color-paper-100: 236 239 243;
+  --color-mint-400: 95 227 176;
+  --color-mint-500: 47 203 147;
+  --color-amber-400: 245 184 78;
+  --color-coral-400: 255 122 102;
+  --color-violet-400: 156 134 255;
+
+  --grid-line: rgba(255, 255, 255, 0.04);
+  --panel-ring: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme='light'] {
+  /* ink-* inverts to surfaces light->dark; paper-* inverts to text dark->light. */
+  --color-ink-950: 255 255 255;
+  --color-ink-900: 243 245 248;
+  --color-ink-800: 231 234 240;
+  --color-ink-700: 214 219 228;
+  --color-ink-600: 174 182 196;
+  --color-paper-50: 18 22 29;
+  --color-paper-100: 27 34 45;
+
+  /* The dark theme's accents are too pale for AA text contrast on a white
+     page, so light mode uses deeper shades of the same four hues instead of
+     reusing the -400 tones verbatim. */
+  --color-mint-400: 4 120 87;
+  --color-mint-500: 4 100 73;
+  --color-amber-400: 180 83 9;
+  --color-coral-400: 194 65 12;
+  --color-violet-400: 109 40 217;
+
+  --grid-line: rgba(10, 14, 20, 0.05);
+  --panel-ring: rgba(10, 14, 20, 0.06);
+}
+
+@layer base {
+  ::selection {
+    background-color: rgb(var(--color-mint-400) / 0.25);
+    color: rgb(var(--color-paper-50));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Tells the browser which palette native widgets (scrollbars, form
+       controls) should match, independent of our own CSS variables. */
+    color-scheme: light dark;
+  }
+
+  [data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  [data-theme='light'] {
+    color-scheme: light;
+  }
+
+  /* The nav is sticky (~57px tall), so an un-offset anchor jump parks the
+     section heading underneath it. Applied to every linkable landmark rather
+     than per-section, so new sections get it for free. */
+  section[id],
+  footer[id] {
+    scroll-margin-top: 5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body {
+    @apply bg-ink-950 text-paper-100 font-sans;
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-image: theme('backgroundImage.grid');
+    background-size: theme('backgroundSize.grid');
+  }
+}

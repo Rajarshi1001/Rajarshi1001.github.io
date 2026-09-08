@@ -1,0 +1,34 @@
+---
+title: "Migrating three marketing models off PySpark, one pipeline at a time"
+date: "2025-12-05"
+summary: "A 30% runtime reduction was the headline. The refactored feature pipelines were the actual work."
+tags: ["data engineering", "bigquery"]
+---
+
+Three marketing models shared a common problem: their feature engineering lived in PySpark jobs
+that had grown, over a couple of years, into something closer to load-bearing scar tissue than a
+pipeline. Migrating them to BigQuery wasn't really about BigQuery being faster — though it is — it
+was about being able to change the feature logic without three engineers holding their breath.
+
+## Refactor the features before you migrate the compute
+
+The temptation with a platform migration is to port the code as directly as possible and worry
+about cleanup later. We refactored the feature engineering logic first, in place, on the existing
+PySpark pipeline — collapsing duplicated joins, naming intermediate features consistently across
+all three models — and only then rewrote the equivalent logic as BigQuery SQL. Porting a mess
+just gets you the same mess, in a new place, that's now also unfamiliar.
+
+## Automated tracking, not tribal knowledge
+
+Each of the three models had previously been re-run and re-scored by whoever remembered the right
+sequence of scripts. Part of the migration was building automated model tracking and a scoring
+script that runs the same way every time, logging inputs and outputs, so "did this model actually
+run this month" stopped being a Slack question.
+
+## The number that mattered, and the one that didn't
+
+The 30% runtime reduction is the number that goes in a summary slide. The number that actually
+changed day-to-day work was different: feature changes that used to require coordinating a Spark
+cluster window could now be tested and deployed independently, per model, without touching the
+other two. Runtime was a nice side effect of moving off infrastructure that had outgrown what it
+was built for. The maintainability was the point.

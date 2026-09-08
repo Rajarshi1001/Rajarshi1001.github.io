@@ -1,0 +1,38 @@
+---
+title: "Making an LSTM's decisions legible to a risk reviewer"
+date: "2026-01-18"
+summary: "Attention weights and sequence-level SHAP aren't the same tool. A production response model needed both."
+tags: ["interpretability", "deep learning"]
+---
+
+An LSTM-based response model outperformed our gradient-boosted baseline on sequence data — contact
+history, engagement patterns over time — by a comfortable margin. That was never the hard part.
+The hard part was getting a model that isn't a decision tree past a review process built around
+being able to explain, in a sentence, why a specific customer got a specific decision.
+
+## Attention weights answer "when"
+
+Visualizing the attention weights over the input sequence answers a narrow but useful question:
+*which time steps did the model actually look at?* If the model is weighting a channel interaction
+from fourteen months ago as heavily as one from last week, that's worth knowing before you ship it
+— sometimes it's a real signal, sometimes it's the model latching onto an artifact of how the
+sequence was padded.
+
+Attention weights are not, on their own, an explanation of *why* the model made a particular
+prediction. They tell you where it looked, not what it concluded from looking there.
+
+## Sequence-level SHAP answers "why"
+
+For the "why," we computed SHAP contributions over the sequence, attributing the final prediction
+back to individual time steps and features rather than treating the sequence as one opaque blob.
+That's what actually goes in front of a reviewer: not "the model attended to month 11," but "a
+spend increase in month 11, combined with a channel switch in month 13, contributed +0.14 to the
+response score."
+
+## Using both, deliberately
+
+The two tools answer different questions, and using only one leaves a gap. We paired attention
+visualization for debugging — catching sequences the model was attending to in an obviously wrong
+way — with SHAP for the artifact that actually accompanies a scoring decision. That combination is
+what got the model through governance, and it's the reason the estimated 15% lift in conversion
+ever made it into production instead of staying a promising offline result.
