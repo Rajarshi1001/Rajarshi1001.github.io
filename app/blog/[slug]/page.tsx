@@ -8,11 +8,10 @@ export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
 }
 
-// The site name is appended by the title template in app/layout.tsx.
+// No `title` here — the tab title is fixed in app/layout.tsx.
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const post = getPostBySlug(params.slug);
   return {
-    title: post.title,
     description: post.summary,
     openGraph: {
       type: 'article',

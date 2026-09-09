@@ -2,9 +2,8 @@ import type { Metadata } from 'next';
 import ProjectCard from '@/components/ProjectCard';
 import { projects } from '@/data/projects';
 
-// The site name is appended by the title template in app/layout.tsx.
+// No `title` here — the tab title is fixed in app/layout.tsx.
 export const metadata: Metadata = {
-  title: 'Projects',
   description: 'Reinforcement learning, MLOps, and NLP projects by Rajarshi Dutta.',
 };
 

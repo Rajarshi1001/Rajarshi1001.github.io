@@ -24,10 +24,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: `${site.name} — ${site.role}`,
-    template: `%s — ${site.name}`,
-  },
+  // Fixed on purpose — the browser tab should always read "Rajarshi | Portfolio",
+  // not a per-page title. Child routes must not set their own `title`.
+  title: 'Rajarshi | Portfolio',
   // The role alone is too thin for a search snippet; the summary reads better.
   description: site.summary,
   openGraph: {

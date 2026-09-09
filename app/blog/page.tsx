@@ -3,9 +3,8 @@ import Link from 'next/link';
 import Tag from '@/components/Tag';
 import { getAllPosts } from '@/lib/posts';
 
-// The site name is appended by the title template in app/layout.tsx.
+// No `title` here — the tab title is fixed in app/layout.tsx.
 export const metadata: Metadata = {
-  title: 'Writing',
   description: 'Notes on machine learning models that had to survive contact with production.',
 };
 
